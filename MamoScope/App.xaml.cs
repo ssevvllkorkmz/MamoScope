@@ -1,5 +1,5 @@
-﻿using System.Configuration;
-using System.Data;
+﻿using System;
+using System.IO;
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
 using MamoScope.ViewModels;
@@ -7,6 +7,7 @@ using MamoScope.Views;
 using MamoScope.Data;
 using System;
 using Microsoft.EntityFrameworkCore;
+
 
 
 namespace MamoScope
@@ -29,7 +30,7 @@ namespace MamoScope
         {
             services.AddDbContextFactory<AppDbContext>();
 
-            services.AddTransient<PastRecordsViewModel>();
+            services.AddSingleton<PastRecordsViewModel>();
             services.AddTransient<MainWindowViewModel>();
             services.AddTransient<TestRecordsViewModel>();
 
@@ -41,6 +42,7 @@ namespace MamoScope
 
         protected override void OnStartup(StartupEventArgs e)
         {
+            
             base.OnStartup(e);
 
             var dbFactory = ServiceProvider.GetRequiredService<IDbContextFactory<AppDbContext>>();

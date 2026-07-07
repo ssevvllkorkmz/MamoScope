@@ -9,7 +9,34 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="C:\Users\sevva\.nuget\packages\materialdesignthemes\5.3.2\contentFiles\any\net10.0-windows7.0\Resources\Noto\NotoSans-Bold.ttf" />
+    <Content Remove="C:\Users\sevva\.nuget\packages\materialdesignthemes\5.3.2\contentFiles\any\net10.0-windows7.0\Resources\Noto\NotoSans-BoldItalic.ttf" />
+    <Content Remove="C:\Users\sevva\.nuget\packages\materialdesignthemes\5.3.2\contentFiles\any\net10.0-windows7.0\Resources\Noto\NotoSans-Italic.ttf" />
+    <Content Remove="C:\Users\sevva\.nuget\packages\materialdesignthemes\5.3.2\contentFiles\any\net10.0-windows7.0\Resources\Noto\NotoSans-Regular.ttf" />
+    <Content Remove="C:\Users\sevva\.nuget\packages\materialdesignthemes\5.3.2\contentFiles\any\net10.0-windows7.0\Resources\Roboto\Roboto-Black.ttf" />
+    <Content Remove="C:\Users\sevva\.nuget\packages\materialdesignthemes\5.3.2\contentFiles\any\net10.0-windows7.0\Resources\Roboto\Roboto-BlackItalic.ttf" />
+    <Content Remove="C:\Users\sevva\.nuget\packages\materialdesignthemes\5.3.2\contentFiles\any\net10.0-windows7.0\Resources\Roboto\Roboto-Bold.ttf" />
+    <Content Remove="C:\Users\sevva\.nuget\packages\materialdesignthemes\5.3.2\contentFiles\any\net10.0-windows7.0\Resources\Roboto\Roboto-BoldItalic.ttf" />
+    <Content Remove="C:\Users\sevva\.nuget\packages\materialdesignthemes\5.3.2\contentFiles\any\net10.0-windows7.0\Resources\Roboto\Roboto-Italic.ttf" />
+    <Content Remove="C:\Users\sevva\.nuget\packages\materialdesignthemes\5.3.2\contentFiles\any\net10.0-windows7.0\Resources\Roboto\Roboto-Light.ttf" />
+    <Content Remove="C:\Users\sevva\.nuget\packages\materialdesignthemes\5.3.2\contentFiles\any\net10.0-windows7.0\Resources\Roboto\Roboto-LightItalic.ttf" />
+    <Content Remove="C:\Users\sevva\.nuget\packages\materialdesignthemes\5.3.2\contentFiles\any\net10.0-windows7.0\Resources\Roboto\Roboto-Medium.ttf" />
+    <Content Remove="C:\Users\sevva\.nuget\packages\materialdesignthemes\5.3.2\contentFiles\any\net10.0-windows7.0\Resources\Roboto\Roboto-MediumItalic.ttf" />
+    <Content Remove="C:\Users\sevva\.nuget\packages\materialdesignthemes\5.3.2\contentFiles\any\net10.0-windows7.0\Resources\Roboto\Roboto-Regular.ttf" />
+    <Content Remove="C:\Users\sevva\.nuget\packages\materialdesignthemes\5.3.2\contentFiles\any\net10.0-windows7.0\Resources\Roboto\Roboto-Thin.ttf" />
+    <Content Remove="C:\Users\sevva\.nuget\packages\materialdesignthemes\5.3.2\contentFiles\any\net10.0-windows7.0\Resources\Roboto\Roboto-ThinItalic.ttf" />
+    <Content Remove="C:\Users\sevva\.nuget\packages\materialdesignthemes\5.3.2\contentFiles\any\net10.0-windows7.0\Resources\Roboto\RobotoCondensed-Bold.ttf" />
+    <Content Remove="C:\Users\sevva\.nuget\packages\materialdesignthemes\5.3.2\contentFiles\any\net10.0-windows7.0\Resources\Roboto\RobotoCondensed-BoldItalic.ttf" />
+    <Content Remove="C:\Users\sevva\.nuget\packages\materialdesignthemes\5.3.2\contentFiles\any\net10.0-windows7.0\Resources\Roboto\RobotoCondensed-Italic.ttf" />
+    <Content Remove="C:\Users\sevva\.nuget\packages\materialdesignthemes\5.3.2\contentFiles\any\net10.0-windows7.0\Resources\Roboto\RobotoCondensed-Light.ttf" />
+    <Content Remove="C:\Users\sevva\.nuget\packages\materialdesignthemes\5.3.2\contentFiles\any\net10.0-windows7.0\Resources\Roboto\RobotoCondensed-LightItalic.ttf" />
+    <Content Remove="C:\Users\sevva\.nuget\packages\materialdesignthemes\5.3.2\contentFiles\any\net10.0-windows7.0\Resources\Roboto\RobotoCondensed-Regular.ttf" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageReference Include="MaterialDesignColors" Version="5.3.2" />
+    <PackageReference Include="MaterialDesignThemes" Version="5.3.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.9">
       <PrivateAssets>all</PrivateAssets>

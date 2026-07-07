@@ -33,6 +33,16 @@ namespace MamoScope.ViewModels
         [ObservableProperty]
         private bool _isLoading;
 
+        [ObservableProperty]
+        private bool _isResultDialogOpen;
+
+        [ObservableProperty]
+        private bool _resultIsSucces;
+
+        [ObservableProperty]
+        private string _resultMessage;
+
+
         private readonly IDbContextFactory<AppDbContext> _dbFactory;
 
 
@@ -41,6 +51,12 @@ namespace MamoScope.ViewModels
         {
             _dbFactory = dbFactory; 
             _tarih = DateTime.Now.ToString("dd.MM.yyyy HH:mm");
+        }
+
+        [RelayCommand]
+        private void CloseResultDialog()
+        {
+            IsResultDialogOpen = false;
         }
 
         [RelayCommand] 
@@ -84,7 +100,12 @@ namespace MamoScope.ViewModels
                 using var db = _dbFactory.CreateDbContext();
                 db.MotorDrivers.Add(yeniKayit);
                 db.SaveChanges();
-                System.Windows.MessageBox.Show($"Test Sonuçlandırıldı!\nSeri No: {SerialNumber}\nVoltaj: {gercekVoltaj}V\nSonuç: {TestSonucu}");
+                var pastVM = App.ServiceProvider.GetRequiredService<PastRecordsViewModel>();
+                pastVM.VerileriYenile();
+
+                ResultIsSucces = BasariliMi;
+                ResultMessage = $"Seri No: { SerialNumber}\nVoltaj: { gercekVoltaj}V\nSonuç: { TestSonucu}";
+                IsResultDialogOpen = true;
             }
             catch (Exception ex)
             {

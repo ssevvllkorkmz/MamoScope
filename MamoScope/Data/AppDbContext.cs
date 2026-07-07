@@ -13,7 +13,7 @@ namespace MamoScope.Data
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(
-                @"Server=(localdb)\mssqllocaldb;Database=MamoScopeDb;Trusted_Connection=True;TrustServerCertificate=True;",
+             @"Server=(localdb)\mssqllocaldb;Database=MamoScopeDb;Trusted_Connection=True;",
                 sqlServerOptionsAction: sqlOptions =>
                 {
 

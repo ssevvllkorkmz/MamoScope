@@ -33,11 +33,24 @@ namespace MamoScope.ViewModels
 
         {
             _dbFactory = dbFactory;
+            GecmisTestler = new System.Collections.ObjectModel.ObservableCollection<MotorDrivers>();
             VerileriVeriTabanindanYukle();
-           
+            VerileriYenile();         
         }
 
-      
+        [RelayCommand]
+        public void VerileriYenile()
+        {
+            using var db = _dbFactory.CreateDbContext();
+            var liste = db.MotorDrivers.OrderByDescending(x=>x.TestDate).ToList();
+
+            GecmisTestler.Clear();
+
+            foreach (var item in liste)
+            {
+                GecmisTestler.Add(item);
+            }
+        }
 
         [RelayCommand]
         private async Task VerileriVeriTabanindanYukle()

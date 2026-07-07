@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MamoScope"
         mc:Ignorable="d"
-        Title="MamoScope Test Sistemi" Height="500" Width="850"
+        Title="MamoScope Test Sistemi"  Height="700" Width="900"
+        MinHeight="650" MinWidth="850"
         WindowStartupLocation="CenterScreen">
 
     <Grid>
