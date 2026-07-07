@@ -62,14 +62,14 @@ namespace MamoScope.ViewModels
         [RelayCommand] 
         private void VoltajTest()
         {
-            if (string.IsNullOrEmpty(_voltajDegeri) || string.IsNullOrEmpty(_serialNumber))
+            if (string.IsNullOrEmpty(VoltajDegeri) || string.IsNullOrEmpty(SerialNumber))
             {
                 System.Windows.MessageBox.Show("Lütfen önce voltaj ve seri numarası girin veya simüle edin!");
                 return;
             }
 
 
-            string temizVoltajMetni = _voltajDegeri?.Replace('.', ',') ?? "0";
+            string temizVoltajMetni = VoltajDegeri?.Replace('.', ',') ?? "0";
             double gercekVoltaj = 0;
             double.TryParse(temizVoltajMetni, out gercekVoltaj);
 
@@ -77,12 +77,12 @@ namespace MamoScope.ViewModels
 
             if (gercekVoltaj >= 23.5 && gercekVoltaj <= 24.5)
             {
-                _testSonucu = "BAŞARILI";
+                TestSonucu = "BAŞARILI";
                 BasariliMi = true;
             }
             else
             {
-                _testSonucu = "BAŞARISIZ";
+                TestSonucu = "BAŞARISIZ";
                 BasariliMi = false;
             }
 

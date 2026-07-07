@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.IO;
 
 namespace MamoScope.Data
 {
@@ -12,8 +13,17 @@ namespace MamoScope.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            
+            string belgelerKlasoru = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            string veriKlasoru = Path.Combine(belgelerKlasoru, "MamoScopeDb");
+
+            
+            Directory.CreateDirectory(veriKlasoru);
+
+            string mdfYolu = Path.Combine(veriKlasoru, "MamoScopeDb.mdf");
+
             optionsBuilder.UseSqlServer(
-             @"Server=(localdb)\mssqllocaldb;Database=MamoScopeDb;Trusted_Connection=True;",
+             $@"Server=(localdb)\mssqllocaldb;AttachDbFilename={mdfYolu};Database=MamoScopeDb;Trusted_Connection=True;",
                 sqlServerOptionsAction: sqlOptions =>
                 {
 
@@ -27,10 +37,10 @@ namespace MamoScope.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            
+
             modelBuilder.Entity<MotorDrivers>(entity =>
             {
-                entity.HasKey(e => e.Id); 
+                entity.HasKey(e => e.Id);
                 entity.Property(e => e.SerialNumber).HasMaxLength(50).IsRequired();
                 entity.Property(e => e.Voltage).IsRequired();
                 entity.Property(e => e.TestDate).IsRequired();
