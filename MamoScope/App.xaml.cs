@@ -1,12 +1,15 @@
-﻿using System;
-using System.IO;
-using System.Windows;
-using Microsoft.Extensions.DependencyInjection;
+﻿using MamoScope.Core.Interfaces;
+using MamoScope.Data;
+using MamoScope.Data.Repositories;
+using MamoScope.Navigations;
+using MamoScope.Services;
 using MamoScope.ViewModels;
 using MamoScope.Views;
-using MamoScope.Data;
-using System;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.IO;
+using System.Windows;
 
 
 
@@ -30,11 +33,17 @@ namespace MamoScope
         {
             services.AddDbContextFactory<AppDbContext>();
 
-            services.AddSingleton<PastRecordsViewModel>();
+            services.AddTransient<IMotorDriversService, MotorDriversService>();
+            services.AddSingleton<MotorDriversStore>();
+            services.AddSingleton<INavigationService, NavigationService>();
+            services.AddTransient<IMotorDriversRepository, MotorDriversRepository>();
+
+
+            services.AddTransient<PastRecordsViewModel>();
             services.AddTransient<MainWindowViewModel>();
             services.AddTransient<TestRecordsViewModel>();
 
-            services.AddTransient<MainWindowView>();
+            services.AddSingleton<MainWindowView>();
             services.AddTransient<PastRecordsView>();
             services.AddTransient<TestRecordsView>();
 
@@ -51,6 +60,14 @@ namespace MamoScope
                 db.Database.EnsureCreated();
             }
 
+            _ = Task.Run(async () =>
+            {
+                using var db = dbFactory.CreateDbContext();
+                db.MotorDrivers.Any();
+            });
+
+            var store = ServiceProvider.GetRequiredService<MotorDriversStore>();
+            _ = store.YukleAsync();
 
             var mainLayout = ServiceProvider.GetRequiredService<MainWindowView>();
             var mainVM = ServiceProvider.GetRequiredService<MainWindowViewModel>();

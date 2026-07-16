@@ -1,7 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using MamoScope.Core.Interfaces;
 using MamoScope.Data;
 using MamoScope.Models;
+using MamoScope.Services;
 using MamoScope.Views;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,6 +12,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
 using System.Windows;
+using System.Globalization;
+
 
 
 namespace MamoScope.ViewModels
@@ -19,39 +23,43 @@ namespace MamoScope.ViewModels
     {
 
         [ObservableProperty]
-        private string _serialNumber;
+        private string serialNumber;
 
         [ObservableProperty]
-        private string _voltajDegeri;
+        private string voltajDegeri;
 
         [ObservableProperty]
-        private string _tarih;
+        private string tarih;
 
         [ObservableProperty]
-        private string _testSonucu;
+        private string testSonucu;
 
         [ObservableProperty]
-        private bool _isLoading;
+        private bool isLoading;
 
         [ObservableProperty]
-        private bool _isResultDialogOpen;
+        private bool isResultDialogOpen;
 
         [ObservableProperty]
-        private bool _resultIsSucces;
+        private bool resultIsSucces;
 
         [ObservableProperty]
-        private string _resultMessage;
+        private string resultMessage;
 
 
-        private readonly IDbContextFactory<AppDbContext> _dbFactory;
+        private readonly IMotorDriversService motorDriversService;
+        private readonly MotorDriversStore motorDriversStore;
 
 
-        public TestRecordsViewModel(IDbContextFactory<AppDbContext> dbFactory)
+
+        public TestRecordsViewModel(IMotorDriversService motorDriversService,MotorDriversStore motorDriversStore)
 
         {
-            _dbFactory = dbFactory; 
-            _tarih = DateTime.Now.ToString("dd.MM.yyyy HH:mm");
+            this.motorDriversService = motorDriversService;
+            this.motorDriversStore = motorDriversStore;
+            tarih = DateTime.Now.ToString("dd.MM.yyyy HH:mm");
         }
+
 
         [RelayCommand]
         private void CloseResultDialog()
@@ -59,86 +67,66 @@ namespace MamoScope.ViewModels
             IsResultDialogOpen = false;
         }
 
-        [RelayCommand] 
-        private void VoltajTest()
+        [RelayCommand]
+        private async Task VoltajTestveKaydetAsync()
         {
             if (string.IsNullOrEmpty(VoltajDegeri) || string.IsNullOrEmpty(SerialNumber))
             {
-                System.Windows.MessageBox.Show("Lütfen önce voltaj ve seri numarası girin veya simüle edin!");
+                MessageBox.Show("Lütfen önce voltaj ve seri numarası girin veya simüle edin!");
                 return;
             }
 
+            string temizVoltajMetni = VoltajDegeri?.Trim().Replace(',', '.') ?? "0";
 
-            string temizVoltajMetni = VoltajDegeri?.Replace('.', ',') ?? "0";
-            double gercekVoltaj = 0;
-            double.TryParse(temizVoltajMetni, out gercekVoltaj);
-
-            bool BasariliMi = false;
-
-            if (gercekVoltaj >= 23.5 && gercekVoltaj <= 24.5)
+            if (!double.TryParse(temizVoltajMetni, NumberStyles.Any, CultureInfo.InvariantCulture, out double gercekVoltaj))
             {
-                TestSonucu = "BAŞARILI";
-                BasariliMi = true;
+                MessageBox.Show("Geçerli bir voltaj değeri girin (örnek: 24.5)");
+                return;
             }
-            else
-            {
-                TestSonucu = "BAŞARISIZ";
-                BasariliMi = false;
-            }
-
-            var yeniKayit = new MotorDrivers
-            {
-                SerialNumber = this.SerialNumber ?? "",
-                Voltage = gercekVoltaj,
-                TestDate = DateTime.Now,
-                IsPassed = BasariliMi
-            };
-
 
             try
             {
-                using var db = _dbFactory.CreateDbContext();
-                db.MotorDrivers.Add(yeniKayit);
-                db.SaveChanges();
-                var pastVM = App.ServiceProvider.GetRequiredService<PastRecordsViewModel>();
-                pastVM.VerileriYenile();
+                
+                var (basariliMi, sonucMetni) = await motorDriversStore.TestEtVeKaydetAsync(SerialNumber, gercekVoltaj);
 
-                ResultIsSucces = BasariliMi;
-                ResultMessage = $"Seri No: { SerialNumber}\nVoltaj: { gercekVoltaj}V\nSonuç: { TestSonucu}";
+                TestSonucu = sonucMetni;
+                ResultIsSucces = basariliMi;
+                ResultMessage = $"Seri No: {SerialNumber}\nVoltaj: {gercekVoltaj}V\nSonuç: {TestSonucu}";
                 IsResultDialogOpen = true;
+
+                SerialNumber = string.Empty;
+                VoltajDegeri = string.Empty;
             }
+
+            catch (InvalidOperationException ex)
+            {
+                MessageBox.Show(ex.Message, "Tekrar Kayıt Uyarısı", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+
             catch (Exception ex)
             {
-                System.Windows.MessageBox.Show($"Veri tabanı hatası: {ex.Message}\n\nLütfen SQL Server bağlantınızı veya AppDbContext dosyasındaki ConnectionString'i kontrol edin.");
+                MessageBox.Show($"Veri tabanı hatası: {ex.Message}");
             }
         }
 
 
-        [RelayCommand]
+        [RelayCommand] 
         private void TestVerisiSimuleEt()
         {
-            Random rnd = new Random();
-
-            int rastgeleSayi = rnd.Next(1000, 9999);
-            SerialNumber = $"OPT-DRV-{rastgeleSayi}";
-
-            double uretilenVoltaj = 20.0 + (rnd.NextDouble() * 6.0);
-            uretilenVoltaj = Math.Round(uretilenVoltaj, 1);
-            VoltajDegeri = uretilenVoltaj.ToString();
-
+            var (serialNumber, voltaj) = motorDriversService.TestVerisiSimuleEt();
+            SerialNumber = serialNumber;
+            VoltajDegeri = voltaj.ToString();
             TestSonucu = "";
         }
 
-        [RelayCommand]
-        private async Task GecmisKayıtlarıAc()
+
+        [RelayCommand] 
+        private async Task GecmisKayitlariAc()
         {
-
             IsLoading = true;
-
             await Task.Delay(50);
 
             var gecmisSayfa = App.ServiceProvider.GetRequiredService<PastRecordsView>();
-
             var gecmisSayfVM = App.ServiceProvider.GetRequiredService<PastRecordsViewModel>();
             gecmisSayfa.DataContext = gecmisSayfVM;
 
@@ -149,7 +137,8 @@ namespace MamoScope.ViewModels
             }
 
             IsLoading = false;
-        }
+
+        } 
 
 
     }

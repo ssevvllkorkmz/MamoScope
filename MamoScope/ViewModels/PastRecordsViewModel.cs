@@ -2,92 +2,48 @@
 using CommunityToolkit.Mvvm.Input;
 using MamoScope.Data;
 using MamoScope.Models;
+using MamoScope.Services;
 using MamoScope.Views;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System;
-using System.Collections.Generic;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.Windows;
 
 namespace MamoScope.ViewModels
 {
-   
     public partial class PastRecordsViewModel : ViewModelBase
     {
         [ObservableProperty]
-        private bool _isLoading;
+        private bool isLoading;
 
-        private readonly IDbContextFactory<AppDbContext> _dbFactory;
+        private readonly MotorDriversStore _store;   // ← IMotorDriversService alanı kaldırıldı, artık gerek yok
 
-        [ObservableProperty]
-        private ObservableCollection<MamoScope.Models.MotorDrivers> _gecmisTestler;
+        public ObservableCollection<MotorDrivers> Kayitlar => _store.Kayitlar;
 
-
-        public PastRecordsViewModel(IDbContextFactory<AppDbContext> dbFactory)
-
+        public PastRecordsViewModel(MotorDriversStore store)
         {
-            _dbFactory = dbFactory;
-            GecmisTestler = new System.Collections.ObjectModel.ObservableCollection<MotorDrivers>();
-            VerileriVeriTabanindanYukle();
-            VerileriYenile();         
+            _store = store;   // ← parametreyi alana doğru şekilde ata
         }
 
         [RelayCommand]
-        public void VerileriYenile()
-        {
-            using var db = _dbFactory.CreateDbContext();
-            var liste = db.MotorDrivers.OrderByDescending(x=>x.TestDate).ToList();
-
-            GecmisTestler.Clear();
-
-            foreach (var item in liste)
-            {
-                GecmisTestler.Add(item);
-            }
-        }
-
-        [RelayCommand]
-        private async Task VerileriVeriTabanindanYukle()
+        private async Task YukleAsync()
         {
             IsLoading = true;
-            try
-            {
-                using var db = _dbFactory.CreateDbContext();
-                var sqlVerileri = await Task.Run(() => db.MotorDrivers.ToList());
-              
-                GecmisTestler = new ObservableCollection<MotorDrivers>(sqlVerileri);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Veri yükleme hatası: {ex.Message}");
-            }
-            finally { IsLoading = false; }
+            await _store.YukleAsync();
+            IsLoading = false;
         }
 
         [RelayCommand]
         private void KayıtSayfasiniAc()
         {
-            
             var yeniSayfa = App.ServiceProvider.GetRequiredService<TestRecordsView>();
             var yeniSayfaVM = App.ServiceProvider.GetRequiredService<TestRecordsViewModel>();
-
-           
             yeniSayfa.DataContext = yeniSayfaVM;
 
-            
             var mainWindow = Application.Current.MainWindow;
             if (mainWindow != null && mainWindow.DataContext is MainWindowViewModel mainVM)
             {
-               
                 mainVM.CurrentView = yeniSayfa;
             }
         }
-
     }
 }

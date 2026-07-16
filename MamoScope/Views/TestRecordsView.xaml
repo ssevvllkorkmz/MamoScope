@@ -51,11 +51,11 @@
                     </Grid.ColumnDefinitions>
 
                     <Button Grid.Column="0" Content="Geçmiş Testler" 
-                            Command="{Binding GecmisKayıtlarıAcCommand}" 
+                            Command="{Binding GecmisKayitlariAcCommand}"
                             Style="{StaticResource SecondaryButton}" Height="44"/>
 
                     <Button Grid.Column="2" Content="Test Et" 
-                            Command="{Binding VoltajTestCommand}" 
+                            Command="{Binding VoltajTestveKaydetCommand}"
                             Style="{StaticResource PrimaryButton}" Height="44"/>
                 </Grid>
 
