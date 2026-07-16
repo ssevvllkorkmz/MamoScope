@@ -2,25 +2,47 @@
 
 MamoScopeTest, motor sürücü kartlarının voltaj ve kalite kontrol testlerini gerçekleştirmek, test sonuçlarını yerel bir veri tabanında saklamak ve geriye dönük test geçmişini listelemek amacıyla geliştirilmiş "WPF (MVVM)" tabanlı bir masaüstü yazılımıdır.
 
-Kaynak Kod Yapısı:
-Mamascope
- -Models
-   --MotorDrivers.cs // tanımlama sınıfı
- -Viewmodel
-   --PastRecordsViewModel.cs // geçmiş sayfaları görüntüleyebilmek için yazdığım sınıf
-   --TestrecordsViewModel.cs // kayıt,veri test simülasyonunun gerçekleşmesi için yazdığım sınıf
-   --ViewModelBase // ViewModellere ortak INotıfyPropertyChanged özelliği kazandırma 
-   --MainWindowViewModel // Sayfalar arası geçiş
- -Views
-   --MainWindowView.cs // sabit çerçeve
-   --TestRecordsView.xmal // kayıt sayfasını görüntüleyen arayüz dosyası
-   --PastRecordsView.xmal // geçmiş kayıtların görüntülendiği arayüz dosyası
- -Core
-   --RelayCommand.cs // XMAL'deki butonu C# metoduna bağlayan köprü
- -Data
-   --AppDbContext.cs // EF core ile veri tabanına bağlanma 
- -App.xmal // Uygulama başlangıcı ve DI servis kayıtları
- -Migrations // değişiklikleri veri tabanına yansıtma 
+MamoScope/
+├── Core/
+│   └── Interfaces/
+│       └── IMotorDriversService.cs      // Servis katmanının sözleşmesi (contract)
+│
+├── Data/
+│   ├── AppDbContext.cs                  // EF Core veritabanı bağlamı
+│   ├── Migrations/                      // Veritabanı şema geçmişi
+│   └── Repositories/
+│       ├── IMotorDriversRepository.cs   // Repository sözleşmesi
+│       └── MotorDriverRepository.cs     // Ham CRUD işlemleri (veritabanına git-gel)
+│
+├── Models/
+│   └── MotorDrivers.cs                  // Veri modeli (SerialNumber, Voltage, IsPassed, TestDate)
+│
+├── Navigations/
+│   ├── INavigationService.cs            // Sayfa geçişi sözleşmesi
+│   └── NavigationService.cs             // ViewModel-first navigasyon yönetimi
+│
+├── Resources/
+│   ├── Colors.xaml                      // Renk paleti
+│   ├── Buttons.xaml                     // Buton stilleri
+│   ├── Inputs.xaml                      // Giriş kutusu stilleri
+│   └── TextStyles.xaml                  // Yazı stilleri
+│
+├── Services/
+│   ├── MotorDriversService.cs           // İş kuralları (voltaj eşiği, tekrar kayıt engeli)
+│   └── MotorDriversStore.cs             // Paylaşılan bellek cache'i (ObservableCollection)
+│
+├── ViewModels/
+│   ├── ViewModelBase.cs                 // Ortak ViewModel altyapısı
+│   ├── MainWindowViewModel.cs           // Sayfalar arası geçiş / aktif içerik yönetimi
+│   ├── TestRecordsViewModel.cs          // Test simülasyonu ve kayıt işlemleri
+│   └── PastRecordsViewModel.cs          // Geçmiş kayıtların listelenmesi
+│
+├── Views/
+│   ├── MainWindowView.xaml              // Uygulamanın gerçek ana penceresi
+│   ├── TestRecordsView.xaml             // Kayıt/test sayfası arayüzü
+│   └── PastRecordsView.xaml             // Geçmiş kayıtlar sayfası arayüzü
+│
+└── App.xaml / App.xaml.cs               // Uygulama girişi, DI servis kayıtları, kaynak birleştirme
 
  MamoScope Veritabanı Oluşturma Scripti:
  Script-Migration komutu ile elde edildi 
