@@ -4,10 +4,23 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MamoScope"
+        xmlns:vm="clr-namespace:MamoScope.ViewModels"
+        xmlns:vw="clr-namespace:MamoScope.Views"
         mc:Ignorable="d"
         Title="MamoScope Test Sistemi"  Height="700" Width="900"
         MinHeight="650" MinWidth="850"
         WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+       
+        <DataTemplate DataType="{x:Type vm:TestRecordsViewModel}">
+            <vw:TestRecordsView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:PastRecordsViewModel}">
+            <vw:PastRecordsView />
+        </DataTemplate>
+    </Window.Resources>
 
     <Grid>
         <ContentControl Content="{Binding CurrentView}" />

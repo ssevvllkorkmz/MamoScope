@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using MamoScope.Core.Interfaces;
 using MamoScope.Data;
 using MamoScope.Models;
+using MamoScope.Navigations;
 using MamoScope.Services;
 using MamoScope.Views;
 using Microsoft.EntityFrameworkCore;
@@ -10,9 +11,10 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Text;
 using System.Windows;
-using System.Globalization;
+using System.Windows.Navigation;
 
 
 
@@ -49,14 +51,16 @@ namespace MamoScope.ViewModels
 
         private readonly IMotorDriversService motorDriversService;
         private readonly MotorDriversStore motorDriversStore;
+        private readonly INavigationService navigationService;
 
 
 
-        public TestRecordsViewModel(IMotorDriversService motorDriversService,MotorDriversStore motorDriversStore)
+        public TestRecordsViewModel(IMotorDriversService motorDriversService,MotorDriversStore motorDriversStore,INavigationService navigationService)
 
         {
             this.motorDriversService = motorDriversService;
             this.motorDriversStore = motorDriversStore;
+            this.navigationService = navigationService;
             tarih = DateTime.Now.ToString("dd.MM.yyyy HH:mm");
         }
 
@@ -126,15 +130,7 @@ namespace MamoScope.ViewModels
             IsLoading = true;
             await Task.Delay(50);
 
-            var gecmisSayfa = App.ServiceProvider.GetRequiredService<PastRecordsView>();
-            var gecmisSayfVM = App.ServiceProvider.GetRequiredService<PastRecordsViewModel>();
-            gecmisSayfa.DataContext = gecmisSayfVM;
-
-            var mainWindow = Application.Current.MainWindow;
-            if (mainWindow != null && mainWindow.DataContext is MainWindowViewModel mainVM)
-            {
-                mainVM.CurrentView = gecmisSayfa;
-            }
+            navigationService.NavigateTo<PastRecordsViewModel>();
 
             IsLoading = false;
 

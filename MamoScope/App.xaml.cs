@@ -51,40 +51,26 @@ namespace MamoScope
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            
             base.OnStartup(e);
 
+            
             var dbFactory = ServiceProvider.GetRequiredService<IDbContextFactory<AppDbContext>>();
-            using (var db = dbFactory.CreateDbContext())
-            {
-                db.Database.EnsureCreated();
-            }
+            using (var db = dbFactory.CreateDbContext()) { db.Database.EnsureCreated(); }
+            _ = ServiceProvider.GetRequiredService<MotorDriversStore>().YukleAsync();
 
-            _ = Task.Run(async () =>
-            {
-                using var db = dbFactory.CreateDbContext();
-                db.MotorDrivers.Any();
-            });
-
-            var store = ServiceProvider.GetRequiredService<MotorDriversStore>();
-            _ = store.YukleAsync();
-
+           
+            var navService = ServiceProvider.GetRequiredService<INavigationService>();
             var mainLayout = ServiceProvider.GetRequiredService<MainWindowView>();
             var mainVM = ServiceProvider.GetRequiredService<MainWindowViewModel>();
 
-           
-            var ilkSayfa = ServiceProvider.GetRequiredService<TestRecordsView>();
-            var ilkSayfaVM = ServiceProvider.GetRequiredService<TestRecordsViewModel>();
-            ilkSayfa.DataContext = ilkSayfaVM; 
-
-            
-            mainVM.CurrentView = ilkSayfa;
-
-            
             mainLayout.DataContext = mainVM;
+
+            
+            navService.NavigateTo<TestRecordsViewModel>();
+
             mainLayout.Show();
         }
-
     }
 
-}
+
+ }
