@@ -10,5 +10,8 @@ namespace MamoScope.Data.Repositories
         Task<List<MotorDrivers>> GetAllAsync();
         Task<MotorDrivers?> GetBySerialNumberAsync(string serialNumber);
         Task AddAsync(MotorDrivers kayit);
+        Task UpdateAsync(MotorDrivers kayit);
+        Task DeleteAsync(int id);
+
     }
 }

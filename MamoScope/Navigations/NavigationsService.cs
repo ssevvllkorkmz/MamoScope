@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using MamoScope.Core.Interfaces;
+using MamoScope.Models;
+using MamoScope.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace MamoScope.Navigations
@@ -13,6 +16,7 @@ namespace MamoScope.Navigations
         public NavigationService(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
+            
         }
 
         public object? CurrentView
@@ -30,6 +34,11 @@ namespace MamoScope.Navigations
         public void NavigateTo<TViewModel>() where TViewModel : notnull
         {
             CurrentView = _serviceProvider.GetRequiredService<TViewModel>();
+        }
+
+        public void NavigateTo(ViewModelBase viewModel)
+        {
+            CurrentView = viewModel;
         }
     }
 }

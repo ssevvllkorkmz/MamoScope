@@ -1,9 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using MamoScope.Data;
+﻿using MamoScope.Data;
 using MamoScope.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace MamoScope.Data.Repositories
 {
@@ -37,5 +38,25 @@ namespace MamoScope.Data.Repositories
             return await db.MotorDrivers
                 .FirstOrDefaultAsync(x => x.SerialNumber == serialNumber);
         }
+
+        public async Task UpdateAsync(MotorDrivers kayit)
+        {
+            using var db = _dbFactory.CreateDbContext();
+            db.MotorDrivers.Update(kayit);
+            await db.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(int id)
+        {
+            using var db = _dbFactory.CreateDbContext();
+
+            var kayit = await db.MotorDrivers.FindAsync(id);
+            if (kayit == null)
+                throw new InvalidOperationException($"Id={id} olan kayıt bulunamadı.");
+
+            db.MotorDrivers.Remove(kayit);
+            await db.SaveChangesAsync();
+        }
+
     }
 }

@@ -1,7 +1,8 @@
-﻿using System;
+﻿using MamoScope.Models;
+using MamoScope.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Text;
-using MamoScope.ViewModels;
 
 namespace MamoScope.Navigations
 {
@@ -11,5 +12,7 @@ namespace MamoScope.Navigations
         event Action? CurrentViewChanged;
 
         void NavigateTo<TViewModel>() where TViewModel : notnull;
+
+        void NavigateTo(ViewModelBase viewModel);
     }
 }

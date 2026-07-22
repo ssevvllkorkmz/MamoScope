@@ -12,7 +12,7 @@
         WindowStartupLocation="CenterScreen">
 
     <Window.Resources>
-       
+
         <DataTemplate DataType="{x:Type vm:TestRecordsViewModel}">
             <vw:TestRecordsView />
         </DataTemplate>
@@ -20,7 +20,15 @@
         <DataTemplate DataType="{x:Type vm:PastRecordsViewModel}">
             <vw:PastRecordsView />
         </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:RecordDetailsViewModel}">
+            <vw:RecordDetailsView />
+        </DataTemplate>
+
     </Window.Resources>
+
+
+
 
     <Grid>
         <ContentControl Content="{Binding CurrentView}" />

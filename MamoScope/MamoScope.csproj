@@ -44,4 +44,10 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Page Update="Views\RecordDetailsView.xaml">
+      <Generator></Generator>
+    </Page>
+  </ItemGroup>
+
 </Project>

@@ -3,8 +3,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MamoScope.Views"
              mc:Ignorable="d" 
              d:Height="650" Width="900" MinHeight="600" MinWidth="850">
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+    </UserControl.Resources>
 
     <Grid Background="{StaticResource BackgroundBrush}">
         <Border Background="{StaticResource SurfaceBrush}"
@@ -29,6 +34,7 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
+
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0" Text="Seri Numarası" Style="{StaticResource FieldLabel}"/>
                     <TextBlock Grid.Column="1" Text="Voltaj" Style="{StaticResource FieldLabel}"/>
@@ -39,41 +45,124 @@
                 <Rectangle Height="1" Fill="{StaticResource BorderBrush}" Margin="0,0,0,12"/>
 
                 <ScrollViewer MaxHeight="450" VerticalScrollBarVisibility="Auto">
-                    <ItemsControl ItemsSource="{Binding Kayitlar}">
+                    <ItemsControl x:Name="RecordsList" ItemsSource="{Binding Kayitlar}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Grid Margin="0,8">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
+                                <Button Command="{Binding DataContext.SelectRecordCommand, ElementName=RecordsList}"
+                        CommandParameter="{Binding}"
+                        Background="Transparent" BorderThickness="0" Padding="0" Margin="0,8">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <ContentPresenter Cursor="Hand"/>
+                                        </ControlTemplate>
+                                    </Button.Template>
 
-                                    <TextBlock Grid.Column="0" Text="{Binding SerialNumber}" Foreground="{StaticResource TextPrimaryBrush}" VerticalAlignment="Center"/>
-                                    <TextBlock Grid.Column="1" Text="{Binding Voltage, StringFormat={}{0:F1}V}" Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center"/>
-                                    <TextBlock Grid.Column="2" Text="{Binding TestDate, StringFormat={}{0:dd.MM.yyyy HH:mm}}" Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                                    <Grid x:Name="RowGrid">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="40"/>
+                                        </Grid.ColumnDefinitions>
 
-                                    <TextBlock Grid.Column="3" FontWeight="Bold" VerticalAlignment="Center">
-                                        <TextBlock.Style>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="Text" Value="BAŞARISIZ"/>
-                                                <Setter Property="Foreground" Value="{StaticResource ErrorBrush}"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding IsPassed}" Value="True">
-                                                        <Setter Property="Text" Value="BAŞARILI"/>
-                                                        <Setter Property="Foreground" Value="{StaticResource SuccessBrush}"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
-                                </Grid>
+                                        <TextBlock Grid.Column="0" Text="{Binding SerialNumber}" Foreground="{StaticResource TextPrimaryBrush}" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding Voltage, StringFormat={}{0:F1}V}" Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="2" Text="{Binding TestDate, StringFormat={}{0:dd.MM.yyyy HH:mm}}" Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+
+                                        <TextBlock Grid.Column="3" FontWeight="Bold" VerticalAlignment="Center">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Text" Value="BAŞARISIZ"/>
+                                                    <Setter Property="Foreground" Value="{StaticResource ErrorBrush}"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsPassed}" Value="True">
+                                                            <Setter Property="Text" Value="BAŞARILI"/>
+                                                            <Setter Property="Foreground" Value="{StaticResource SuccessBrush}"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                        <Button Grid.Column="4"
+                        Content="✕"
+                        Width="28" Height="28"
+                        FontSize="13" FontWeight="Bold"
+                        Foreground="{StaticResource TextSecondaryBrush}"
+                        BorderThickness="0"
+                        Cursor="Hand"
+                        Command="{Binding DataContext.RequestDeleteCommand, ElementName=RecordsList}"
+                        CommandParameter="{Binding}">
+                                            <Button.Style>
+                                                <Style TargetType="Button">
+                                                    <Setter Property="Opacity" Value="0"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsMouseOver, ElementName=RowGrid}" Value="True">
+                                                            <Setter Property="Opacity" Value="1"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
+                                            <Button.Template>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border x:Name="DeleteBorder"
+                                    Background="Transparent"
+                                    CornerRadius="14">
+                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter TargetName="DeleteBorder" Property="Background" Value="{StaticResource ErrorBrush}"/>
+                                                            <Setter Property="Foreground" Value="White"/>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Button.Template>
+                                        </Button>
+                                    </Grid>
+                                </Button>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                 </ScrollViewer>
             </StackPanel>
         </Border>
+        <Grid Background="#CC000000" 
+              Visibility="{Binding IsDeleteConfirmOpen, Converter={StaticResource BoolToVis}}">
+
+            <Border Background="{StaticResource SurfaceBrush}"
+                    Width="380" Height="200"
+                    CornerRadius="15"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Padding="24">
+
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="Kaydı Sil" FontSize="20" FontWeight="Bold" 
+                               Foreground="{StaticResource ErrorBrush}"
+                               HorizontalAlignment="Center" Margin="0,0,0,10"/>
+
+                    <TextBlock Text="{Binding RecordToDelete.SerialNumber, StringFormat='&quot;{0}&quot; seri numaralı kaydı silmek istediğinize emin misiniz?'}" 
+                               FontSize="15" 
+                               HorizontalAlignment="Center" 
+                               TextAlignment="Center" 
+                               TextWrapping="Wrap"
+                               Margin="0,0,0,20"/>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Button Content="Vazgeç" 
+                                Command="{Binding CancelDeleteCommand}" 
+                                Width="100" Height="36"
+                                Style="{StaticResource SecondaryButton}" Margin="0,0,12,0"/>
+
+                        <Button Content="Evet, Sil" 
+                                Command="{Binding ConfirmDeleteCommand}" 
+                                Width="100" Height="36"
+                                Background="{StaticResource ErrorBrush}" Foreground="White"
+                                Style="{StaticResource PrimaryButton}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Grid>
     </Grid>
 </UserControl>

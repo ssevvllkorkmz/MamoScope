@@ -4,6 +4,7 @@ using MamoScope.Data.Repositories;
 using MamoScope.Navigations;
 using MamoScope.Services;
 using MamoScope.ViewModels;
+using MamoScope.ViewModels.Factories;
 using MamoScope.Views;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -46,6 +47,10 @@ namespace MamoScope
             services.AddSingleton<MainWindowView>();
             services.AddTransient<PastRecordsView>();
             services.AddTransient<TestRecordsView>();
+
+            services.AddSingleton<IViewModelFactory, ViewModelFactory>();
+            services.AddTransient<RecordDetailsViewModel>(); 
+            services.AddTransient<RecordDetailsView>();
 
         }
 
