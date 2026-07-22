@@ -76,15 +76,20 @@ namespace MamoScope.ViewModels
         {
             if (string.IsNullOrEmpty(VoltajDegeri) || string.IsNullOrEmpty(SerialNumber))
             {
-                MessageBox.Show("Lütfen önce voltaj ve seri numarası girin veya simüle edin!");
+                ResultMessage = "Lütfen önce voltaj ve seri numarası girin veya simüle edin!";
+                ResultIsSucces = false;
+                IsResultDialogOpen = true;
                 return;
             }
 
-            string temizVoltajMetni = VoltajDegeri?.Trim().Replace(',', '.') ?? "0";
+            string temizVoltajMetni = VoltajDegeri.Trim().Replace(',', '.');
+
 
             if (!double.TryParse(temizVoltajMetni, NumberStyles.Any, CultureInfo.InvariantCulture, out double gercekVoltaj))
             {
-                MessageBox.Show("Geçerli bir voltaj değeri girin (örnek: 24.5)");
+                ResultMessage = "Geçerli bir voltaj değeri girin (örnek: 24.5)";
+                ResultIsSucces = false;
+                IsResultDialogOpen = true;
                 return;
             }
 
@@ -104,12 +109,15 @@ namespace MamoScope.ViewModels
 
             catch (InvalidOperationException ex)
             {
-                MessageBox.Show(ex.Message, "Tekrar Kayıt Uyarısı", MessageBoxButton.OK, MessageBoxImage.Warning);
+                ResultMessage = ex.Message;
+                ResultIsSucces = false;
+                IsResultDialogOpen = true;
             }
-
             catch (Exception ex)
             {
-                MessageBox.Show($"Veri tabanı hatası: {ex.Message}");
+                ResultMessage = $"Veri tabanı hatası: {ex.Message}";
+                ResultIsSucces = false;
+                IsResultDialogOpen = true;
             }
         }
 
